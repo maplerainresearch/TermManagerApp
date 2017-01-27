@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<SplitPane dividerPositions="0.10301507537688442" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="375.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.maplerain.termmanager.view.TermOverviewController">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="57.0" prefWidth="598.0">
+         <children>
+            <ToolBar layoutX="44.0" prefHeight="195.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                  <TextField fx:id="sourceTermField" />
+                  <Button mnemonicParsing="false" onAction="#handleFindTerm" prefWidth="75.0" text="Find" />
+                <Button mnemonicParsing="false" onAction="#handleAddTerm" prefWidth="75.0" text="Add" />
+              </items>
+            </ToolBar>
+         </children></AnchorPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+         <children>
+            <SplitPane dividerPositions="0.29797979797979796" layoutY="-160.0" prefHeight="353.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <TableView fx:id="termTable" prefHeight="351.0" prefWidth="174.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TableColumn fx:id="sourceTermColumn" prefWidth="164.0" text="Source Term" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <GridPane prefHeight="205.0" prefWidth="394.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="191.0" minWidth="10.0" prefWidth="119.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="275.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="150.0" minHeight="10.0" prefHeight="73.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="276.0" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Source Term" />
+                              <Label text="Target Term" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                              <Label fx:id="sourceTermLabel" text="Label" GridPane.columnIndex="1" />
+                              <Label fx:id="targetTermLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                           </children>
+                        </GridPane>
+                        <ButtonBar layoutX="186.0" layoutY="291.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                          <buttons>
+                            <Button mnemonicParsing="false" onAction="#handleEditTerm" text="Edit..." />
+                              <Button mnemonicParsing="false" onAction="#handleDeleteTerm" text="Delete" />
+                          </buttons>
+                        </ButtonBar>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children></AnchorPane>
+  </items>
+</SplitPane>
