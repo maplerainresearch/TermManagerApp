@@ -111,6 +111,7 @@ public class TermOverviewController {
     @FXML
     private void handleAddTerm() {
         Term tempTerm = new Term();
+        tempTerm.setSourceTerm(sourceTermField.getText());
         boolean okClicked = mainApp.showTermEditDialog(tempTerm);
         if (okClicked) {
             Term foundTerm = mainApp.findTermInTermMap(tempTerm.getSourceTerm());
