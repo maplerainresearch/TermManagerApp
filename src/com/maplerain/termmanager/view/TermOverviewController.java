@@ -116,7 +116,7 @@ public class TermOverviewController {
         if (okClicked) {
             Term foundTerm = mainApp.findTermInTermMap(tempTerm.getSourceTerm());
             if(foundTerm != null) {
-                foundTerm.setTargetTerm(foundTerm.getTargetTerm() + ", " + tempTerm.getTargetTerm());
+                foundTerm.setTargetTerm(foundTerm.getTargetTerm() + "; " + tempTerm.getTargetTerm());
                 termTable.scrollTo(foundTerm);
                 termTable.getSelectionModel().clearSelection();
                 termTable.getSelectionModel().select(foundTerm);

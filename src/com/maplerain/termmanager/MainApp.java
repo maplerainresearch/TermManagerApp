@@ -7,6 +7,11 @@ package com.maplerain.termmanager;
  * Adapted from "JavaFX 8 Tutorial"
  * at http://code.makery.ch/library/javafx-8-tutorial/
  * by Marco Jakob
+ *
+ *
+ * Version 0.1
+ * - Basic new, open, save, save as, exit, add term, edit term, delete term.
+ * - Import from CSV, export to CSV.
  */
 
 import com.maplerain.termmanager.model.Term;
@@ -18,9 +23,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.SplitPane;
@@ -29,12 +32,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -298,6 +303,69 @@ public class MainApp extends Application {
     }
 
     /**
+     * Imports term data from the specified file, appending it to the current
+     * term data.
+     *
+     * @param file
+     */
+    public void importTermDataFromFile(File file) {
+        try {
+            Reader in = new FileReader(file);
+            Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(in);
+            //Iterable<CSVRecord> records = CSVFormat.EXCEL.withFirstRowAsHeader().parse(in);
+            for (CSVRecord record : records) {
+                Term tempTerm = new Term(record.get(0), record.get(1));
+                Term foundTerm = findTermInTermMap(tempTerm.getSourceTerm());
+                if(foundTerm != null) {
+                    // TODO: check if targetTerm already exists
+                    foundTerm.setTargetTerm(foundTerm.getTargetTerm() + "; " + tempTerm.getTargetTerm());
+                } else {
+                    termData.add(tempTerm);
+                }
+            }
+            updateTermMap();
+        } catch (IOException e) { // catches IO exception
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not import data");
+            alert.setContentText("Could not import data from file:\n" + file.getPath());
+
+            alert.showAndWait();
+        } catch (ArrayIndexOutOfBoundsException ae) {
+            // TODO: find out what is causing this exception
+            System.out.println(ae.getMessage());
+        }
+    }
+
+    /**
+     * Exports the current term data to the specified file.
+     *
+     * @param file
+     */
+    public void exportTermDataToFile(File file) {
+        try {
+            CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader();
+            FileWriter fileWriter = new FileWriter(file);
+            CSVPrinter csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+            for (Term term: termData) {
+                csvFilePrinter.printRecord(term.getSourceTerm(), term.getTargetTerm());
+            }
+
+            fileWriter.flush();
+            fileWriter.close();
+            csvFilePrinter.close();
+        } catch (Exception e) { // catches ANY exception
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not export data");
+            alert.setContentText("Could not export data to file:\n" + file.getPath());
+
+            alert.showAndWait();
+        }
+    }
+
+    /**
      * Searches for a sourceTerm string inside the termMap dictionary.
      *
      * @param sourceTerm the sourceTerm string to search for.
@@ -337,6 +405,7 @@ public class MainApp extends Application {
      * Updates the contents of termMap with the terms stored in termData.
      */
     private void updateTermMap() {
+        termMap.clear();
         for (Term term: termData) {
             termMap.put(term.getSourceTerm(), term.getTargetTerm());
         }
@@ -352,5 +421,9 @@ public class MainApp extends Application {
 
     public void setVersionNumber(String versionNumber) {
         this.versionNumber = versionNumber;
+    }
+
+    public Map<String,String> getTermMap() {
+        return termMap;
     }
 }

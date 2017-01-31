@@ -43,6 +43,7 @@ public class RootLayoutController {
     @FXML
     private void handleNew() {
         mainApp.getTermData().clear();
+        mainApp.getTermMap().clear();
         mainApp.setTermFilePath(null);
     }
 
@@ -63,6 +64,51 @@ public class RootLayoutController {
 
         if (file != null) {
             mainApp.loadTermDataFromFile(file);
+        }
+    }
+
+    /**
+     * Opens a FileChooser to let the user select a CSV glossary file
+     * to import.
+     */
+    @FXML
+    private void handleImport() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "CSV files (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Show open file dialog
+        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+
+        if (file != null) {
+            mainApp.importTermDataFromFile(file);
+        }
+    }
+
+    /**
+     * Opens a FileChooser to let the user select a file to export to.
+     */
+    @FXML
+    private void handleExport() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "CSV files (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Show save file dialog
+        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".csv")) {
+                file = new File(file.getPath() + ".csv");
+            }
+            mainApp.exportTermDataToFile(file);
         }
     }
 
