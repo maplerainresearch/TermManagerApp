@@ -2,9 +2,11 @@
 
 This is a JavaFX application that stores a list of terms in source and target language pairs.
 
-For example:\n
-Source: you\n
-Target: あなた, 君\n
+For example:
+
+Source: you
+
+Target: あなた, 君
 
 The terms are stored in XML.
 
@@ -17,6 +19,8 @@ All I did was tweaked the GUI, and added functionality to search for the source 
 and to update existing terms.
 
 To run, you need to have Java installed.
-Then, with the Java runtime in your path, you can use the following command to run the jar.\n
-java -jar TermManagerApp.jar\n
+Then, with the Java runtime in your path, you can use the following command to run the jar.
+
+java -jar TermManagerApp.jar
+
 (use javaw instead of java if you don't want a console window)
