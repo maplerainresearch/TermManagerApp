@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="TermManagerApp.jnlp">
+  <information>
+    <title>Term Manager</title>
+    <vendor>com.maplerain</vendor>
+    <description>TermManagerApp</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="TermManagerApp.jar" size="20624" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="com.maplerain.termmanager.MainApp"  name="TermManagerApp" />
+  <update check="background"/>
+</jnlp>

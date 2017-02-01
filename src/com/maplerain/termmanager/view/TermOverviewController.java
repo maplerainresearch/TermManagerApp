@@ -123,6 +123,7 @@ public class TermOverviewController {
             } else {
                 mainApp.getTermData().add(tempTerm);
             }
+            mainApp.updateTermMap(); // reflect changes in termMap too
         }
     }
 
@@ -137,6 +138,7 @@ public class TermOverviewController {
             boolean okClicked = mainApp.showTermEditDialog(selectedTerm);
             if (okClicked) {
                 showTermDetails(selectedTerm);
+                mainApp.updateTermMap(); // reflect changes in termMap too
             }
 
         } else {

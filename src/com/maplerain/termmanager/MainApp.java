@@ -16,6 +16,7 @@ package com.maplerain.termmanager;
 
 import com.maplerain.termmanager.model.Term;
 import com.maplerain.termmanager.model.TermListWrapper;
+import com.maplerain.termmanager.util.CSVHandler;
 import com.maplerain.termmanager.view.RootLayoutController;
 import com.maplerain.termmanager.view.TermEditDialogController;
 import com.maplerain.termmanager.view.TermOverviewController;
@@ -32,15 +33,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
@@ -309,32 +308,23 @@ public class MainApp extends Application {
      * @param file
      */
     public void importTermDataFromFile(File file) {
-        try {
-            Reader in = new FileReader(file);
-            Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(in);
-            //Iterable<CSVRecord> records = CSVFormat.EXCEL.withFirstRowAsHeader().parse(in);
-            for (CSVRecord record : records) {
-                Term tempTerm = new Term(record.get(0), record.get(1));
+        CSVHandler csvHandler = new CSVHandler();
+        List<String[]> records = csvHandler.readCSVFile(file);
+        for (String[] record : records) {
+            if (record != null) {
+                Term tempTerm = new Term(record[0], record[1]);
                 Term foundTerm = findTermInTermMap(tempTerm.getSourceTerm());
-                if(foundTerm != null) {
-                    // TODO: check if targetTerm already exists
-                    foundTerm.setTargetTerm(foundTerm.getTargetTerm() + "; " + tempTerm.getTargetTerm());
-                } else {
-                    termData.add(tempTerm);
+                if(foundTerm != null) { // sourceTerm already exists in the termData
+                    if(!foundTerm.getTargetTerm().contains(tempTerm.getTargetTerm())) {
+                        // add the targetTerm only if it does not already exist
+                        foundTerm.setTargetTerm(foundTerm.getTargetTerm() + "; " + tempTerm.getTargetTerm());
+                    }
+                } else { // sourceTerm not in termData
+                    termData.add(tempTerm); // add as a new sourceTerm-targetTerm pair
                 }
             }
-            updateTermMap();
-        } catch (IOException e) { // catches IO exception
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Could not import data");
-            alert.setContentText("Could not import data from file:\n" + file.getPath());
-
-            alert.showAndWait();
-        } catch (ArrayIndexOutOfBoundsException ae) {
-            // TODO: find out what is causing this exception
-            System.out.println(ae.getMessage());
         }
+        updateTermMap();
     }
 
     /**
@@ -343,26 +333,15 @@ public class MainApp extends Application {
      * @param file
      */
     public void exportTermDataToFile(File file) {
-        try {
-            CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader();
-            FileWriter fileWriter = new FileWriter(file);
-            CSVPrinter csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-
-            for (Term term: termData) {
-                csvFilePrinter.printRecord(term.getSourceTerm(), term.getTargetTerm());
-            }
-
-            fileWriter.flush();
-            fileWriter.close();
-            csvFilePrinter.close();
-        } catch (Exception e) { // catches ANY exception
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Could not export data");
-            alert.setContentText("Could not export data to file:\n" + file.getPath());
-
-            alert.showAndWait();
+        CSVHandler csvHandler = new CSVHandler();
+        List<String[]> csvStrings = new ArrayList<String[]>();
+        for(Term term: termData) {
+            String[] record = new String[2];
+            record[0] = term.getSourceTerm();
+            record[1] = term.getTargetTerm();
+            csvStrings.add(record);
         }
+        csvHandler.writeCSVFile(file, csvStrings);
     }
 
     /**
@@ -404,7 +383,7 @@ public class MainApp extends Application {
     /**
      * Updates the contents of termMap with the terms stored in termData.
      */
-    private void updateTermMap() {
+    public void updateTermMap() {
         termMap.clear();
         for (Term term: termData) {
             termMap.put(term.getSourceTerm(), term.getTargetTerm());
