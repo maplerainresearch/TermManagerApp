@@ -24,3 +24,7 @@ Then, with the Java runtime in your path, you can use the following command to r
 java -jar TermManagerApp.jar
 
 (use javaw instead of java if you don't want a console window)
+
+Distributed under MIT License.
+
+Copyright 2017 Maple Rain Research Co., Ltd.
